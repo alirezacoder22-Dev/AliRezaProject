@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Model
-        run: curl -L -A "Mozilla/5.0" -o smollm2.gguf "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct-GGUF/resolve/main/smollm2-135m-instruct-q4_k_m.gguf?download=true"
+        run: curl -L -A "Mozilla/5.0" -o smollm2.gguf "https://huggingface.co/second-state/Qwen2.5-Coder-0.5B-Instruct-GGUF/resolve/main/Qwen2.5-Coder-0.5B-Instruct-Q2_K.gguf
       - name: Download Binary
         run: |
           wget -q https://github.com/ggml-org/llama.cpp/releases/download/b4000/llama-b4000-bin-ubuntu-x64.zip
