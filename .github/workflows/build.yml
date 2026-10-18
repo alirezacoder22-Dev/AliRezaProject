@@ -1,0 +1,49 @@
+name: Build llama.cpp Static
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    
+    steps:
+    - name: Checkout llama.cpp
+      uses: actions/checkout@v4
+      with:
+        repository: 'ggml-org/llama.cpp'
+        ref: 'master'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake libcurl4-openssl-dev
+
+    - name: Configure CMake (Static)
+      run: |
+        cmake -B build \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DLLAMA_STATIC=ON \
+          -DLLAMA_CURL=OFF \
+          -DBUILD_SHARED_LIBS=OFF \
+          -DGGML_NATIVE=OFF
+
+    - name: Build
+      run: |
+        cmake --build build --config Release -j $(nproc) --target llama-cli llama-server
+
+    - name: Strip binaries
+      run: |
+        strip build/bin/llama-cli
+        strip build/bin/llama-server
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: llama-static-binaries
+        path: |
+          build/bin/llama-cli
+          build/bin/llama-server
+        retention-days: 7
