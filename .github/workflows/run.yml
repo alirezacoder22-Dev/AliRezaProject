@@ -5,8 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Model
-        run: wget -q https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct-GGUF/resolve/main/smollm2-135m-instruct-q4_k_m.gguf?download=true
+        run: curl -L -A "Mozilla/5.0" -o smollm2.gguf "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct-GGUF/resolve/main/smollm2-135m-instruct-q4_k_m.gguf?download=true"
       - name: Download Llama-cli
-        run: wget -q https://github.com/ggml-org/llama.cpp/releases/download/b4000/llama-b4000-bin-ubuntu-x64.zip && unzip -q llama-b4000-bin-ubuntu-x64.zip
+        run: curl -L -A "Mozilla/5.0" -o smollm2.gguf "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct-GGUF/resolve/main/smollm2-135m-instruct-q4_k_m.gguf?download=true"
       - name: Run Model
-        run: ./build/bin/llama-cli -m smollm2-135m-instruct-q4_k_m.gguf -p "Once upon a time" -n 50 -t 4
+        run: ./build/bin/llama-cli -m smollm2.gguf -p "Once upon a time" -n 50 -t 4
