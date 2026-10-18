@@ -8,5 +8,7 @@ jobs:
         run: curl -L -A "Mozilla/5.0" -o smollm2.gguf "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct-GGUF/resolve/main/smollm2-135m-instruct-q4_k_m.gguf?download=true"
       - name: Download Llama-cli
         run: curl -L -A "Mozilla/5.0" -o smollm2.gguf "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct-GGUF/resolve/main/smollm2-135m-instruct-q4_k_m.gguf?download=true"
+      - name: List Files
+        run: ls -la && ls -la build/bin || true
       - name: Run Model
         run: ./build/bin/llama-cli -m smollm2.gguf -p "Once upon a time" -n 50 -t 4
