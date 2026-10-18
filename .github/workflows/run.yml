@@ -1,4 +1,4 @@
-name: Run LLM Test
+name: Run LLM
 on: [workflow_dispatch]
 jobs:
   run:
@@ -6,9 +6,12 @@ jobs:
     steps:
       - name: Download Model
         run: curl -L -A "Mozilla/5.0" -o smollm2.gguf "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct-GGUF/resolve/main/smollm2-135m-instruct-q4_k_m.gguf?download=true"
-      - name: Download Llama-cli
-        run: curl -L -A "Mozilla/5.0" -o smollm2.gguf "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct-GGUF/resolve/main/smollm2-135m-instruct-q4_k_m.gguf?download=true"
-      - name: List Files
-        run: ls -la && ls -la build/bin || true
+      - name: Download Binary
+        run: |
+          wget -q https://github.com/ggml-org/llama.cpp/releases/download/b4000/llama-b4000-bin-ubuntu-x64.zip
+          unzip -q llama-b4000-bin-ubuntu-x64.zip
+          find . -name "llama-cli" -type f
       - name: Run Model
-        run: ./build/bin/llama-cli -m smollm2.gguf -p "Once upon a time" -n 50 -t 4
+        run: |
+          CLI_PATH=$(find . -name "llama-cli" -type f | head -n 1)
+          $CLI_PATH -m smollm2.gguf -p "Once upon a time" -n 50 -t 4
