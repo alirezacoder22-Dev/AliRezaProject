@@ -1,0 +1,27 @@
+name: Build Hello x86_64 Static
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install GCC
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc libc6-dev
+
+    - name: Compile hello.c (Static)
+      run: |
+        gcc -O3 -static -o hello_x86 hello.c
+        ls -lh hello_x86
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: hello-binary
+        path: hello_x86
+        retention-days: 3
