@@ -19,7 +19,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential cmake
 
-    - name: Configure CMake (Static, No OpenMP)
+    - name: Configure CMake (Universal Static)
       run: |
         cmake -B build \
           -DCMAKE_BUILD_TYPE=Release \
@@ -27,6 +27,11 @@ jobs:
           -DBUILD_SHARED_LIBS=OFF \
           -DGGML_OPENMP=OFF \
           -DGGML_NATIVE=OFF \
+          -DGGML_AVX=OFF \
+          -DGGML_AVX2=OFF \
+          -DGGML_AVX512=OFF \
+          -DGGML_FMA=OFF \
+          -DGGML_F16C=OFF \
           -DLLAMA_BUILD_TESTS=OFF \
           -DLLAMA_BUILD_EXAMPLES=ON \
           -DLLAMA_BUILD_SERVER=ON \
@@ -36,14 +41,21 @@ jobs:
       run: |
         cmake --build build --config Release -j $(nproc) --target llama-server
 
-    - name: Strip binary
+    - name: Build llama-cli
+      run: |
+        cmake --build build --config Release -j $(nproc) --target llama-cli
+
+    - name: Strip binaries
       run: |
         strip build/bin/llama-server
-        ls -lh build/bin/llama-server
+        strip build/bin/llama-cli
+        ls -lh build/bin/
 
-    - name: Upload Artifact
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: llama-server-static
-        path: build/bin/llama-server
+        name: llama-binaries
+        path: |
+          build/bin/llama-server
+          build/bin/llama-cli
         retention-days: 3
