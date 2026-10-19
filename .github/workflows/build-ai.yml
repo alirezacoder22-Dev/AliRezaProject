@@ -16,8 +16,7 @@ jobs:
     
     - name: Compile main.c (Static)
       run: |
-        # کامپایل استاتیک کد مدل (بدون هیچ وابستگی خارجی)
-        gcc -O3 -static -o main_x86 main.c -lm
+        gcc -O3 -static -I./lib -o main_x86 main.c -lm
         ls -lh main_x86
     
     - name: Upload Artifact
