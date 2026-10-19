@@ -1,0 +1,28 @@
+name: Build AI Model x86_64 Static
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install GCC and libc-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc libc6-dev
+    
+    - name: Compile main.c (Static)
+      run: |
+        # کامپایل استاتیک کد مدل (بدون هیچ وابستگی خارجی)
+        gcc -O3 -static -o main_x86 main.c -lm
+        ls -lh main_x86
+    
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ai-model-binary
+        path: main_x86
+        retention-days: 3
