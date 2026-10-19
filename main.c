@@ -1,5 +1,6 @@
 #define RAI_IMPLEMENTATION
 #include "rriftt_ai.h"
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

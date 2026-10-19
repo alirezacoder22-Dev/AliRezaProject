@@ -16,7 +16,7 @@ jobs:
     
     - name: Compile main.c (Static)
       run: |
-        gcc -O3 -static -I./lib -o main_x86 main.c -lm
+        gcc -std=c2x -O3 -static -I./lib -o main_x86 main.c -lm
         ls -lh main_x86
     
     - name: Upload Artifact
