@@ -102,7 +102,7 @@ int main(void) {
     RaiArena s_grads = rai_arena_create(64 * 1024 * 1024);
     RaiEngine engine = rai_engine_create(64 * 1024 * 1024, mcfg, acfg);
 
-    int total = 3000;
+    int total = 10;
     for (int step = 0; step < total; step++) {
         rai_arena_clear(&s_acts);
         rai_arena_clear(&s_grads);
