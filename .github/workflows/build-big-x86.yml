@@ -17,6 +17,7 @@ jobs:
     - name: Build x86_64
       run: |
         gcc -std=c2x -D__STDC_VERSION__=202311L -Wno-builtin-macro-redefined \
+          -D_DEFAULT_SOURCE \
           -O3 -flto -static -s -Ilib \
           -o main_big_x86 main_big.c -lm
         file main_big_x86
