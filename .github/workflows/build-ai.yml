@@ -14,14 +14,14 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y gcc libc6-dev
     
-    - name: Compile mainTest.c (Static)
+    - name: Compile main_fa1.c (Static)
       run: |
-        gcc -std=c2x -D__STDC_VERSION__=202311L -Ilib mainTest.c -o mainTest -lm -O3 -static
-        ls -lh mainTest
+        gcc -std=c2x -D__STDC_VERSION__=202311L -Ilib main_fa1.c -o main_fa1 -lm -O3 -static
+        ls -lh main_fa1
     
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: ai-model-binary
-        path: mainTest
+        path: main_fa1
         retention-days: 3
