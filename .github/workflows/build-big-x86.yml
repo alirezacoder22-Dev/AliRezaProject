@@ -1,0 +1,30 @@
+name: Build Big x86_64 Static
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install GCC
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc libc6-dev
+
+    - name: Build x86_64
+      run: |
+        gcc -std=c2x -D__STDC_VERSION__=202311L -Wno-builtin-macro-redefined \
+          -O3 -flto -static -s -Ilib \
+          -o main_big_x86 main_big.c -lm
+        file main_big_x86
+        ls -lh main_big_x86
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: big-x86-binary
+        path: main_big_x86
+        retention-days: 7
