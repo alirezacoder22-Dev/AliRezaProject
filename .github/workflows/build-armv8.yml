@@ -18,6 +18,7 @@ jobs:
     - name: Build
       run: |
         arm-none-linux-gnueabihf-gcc -std=c2x \
+          -D__STDC_VERSION__=202311L -Wno-builtin-macro-redefined \
           -O3 -flto -static -s -Ilib \
           -march=armv8-a+crc+crypto+simd \
           -mfpu=crypto-neon-fp-armv8 \
