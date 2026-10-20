@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 199309L
 #define RAI_IMPLEMENTATION
 #include "rriftt_ai.h"
 #include <stdio.h>
