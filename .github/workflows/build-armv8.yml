@@ -1,0 +1,34 @@
+name: Build ARMv8-A Cortex-A53 Static
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install ARM GNU Toolchain 13.3
+      run: |
+        wget -q https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz
+        tar xf arm-gnu-toolchain-*.tar.xz
+        echo "$PWD/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-linux-gnueabihf/bin" >> $GITHUB_PATH
+
+    - name: Build
+      run: |
+        arm-none-linux-gnueabihf-gcc -std=c2x \
+          -O3 -flto -static -s -Ilib \
+          -march=armv8-a+crc+crypto+simd \
+          -mfpu=crypto-neon-fp-armv8 \
+          -mfloat-abi=hard -mtune=cortex-a53 \
+          -o main_armv8 main_fa.c -lm
+        file main_armv8
+        ls -lh main_armv8
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ai-armv8-binary
+        path: main_armv8
+        retention-days: 7
