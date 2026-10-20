@@ -1,0 +1,18 @@
+name: Get Zig Binary
+on:
+  workflow_dispatch:
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download and Extract Zig
+      run: |
+        wget -q https://ziglang.org/download/0.15.1/zig-x86_64-linux-0.15.1.tar.xz
+        tar -xf zig-x86_64-linux-0.15.1.tar.xz
+        ls -lh zig-x86_64-linux-0.15.1/
+    - name: Upload Zig Binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: zig-binary
+        path: zig-x86_64-linux-0.15.1/zig
+        retention-days: 3
