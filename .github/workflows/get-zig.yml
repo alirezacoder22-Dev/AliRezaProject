@@ -16,13 +16,14 @@ jobs:
       run: |
         wget -q https://ziglang.org/download/0.15.1/zig-x86_64-linux-0.15.1.tar.xz
         tar -xf zig-x86_64-linux-0.15.1.tar.xz
-        cp zig-x86_64-linux-0.15.1/zig ./zig_binary
-        ls -lh zig_binary
+        # تقسیم فایل زیگ به تیکه‌های ۵۰ مگابایتی
+        split -b 50M zig-x86_64-linux-0.15.1/zig zig_part_
+        ls -lh zig_part_*
     
     - name: Commit and Push
       run: |
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
-        git add zig_binary
-        git commit -m "Add zig binary to repo"
+        git add zig_part_*
+        git commit -m "Add split zig binary parts"
         git push
