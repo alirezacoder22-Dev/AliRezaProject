@@ -1,0 +1,67 @@
+name: Build Minimal Zig Package
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download Zig
+      run: |
+        wget -q https://ziglang.org/download/0.15.1/zig-x86_64-linux-0.15.1.tar.xz
+        tar -xf zig-x86_64-linux-0.15.1.tar.xz
+    
+    - name: Create Minimal Package
+      run: |
+        cd zig-x86_64-linux-0.15.1
+        
+        # فایل اجرایی
+        cp zig ../zig
+        
+        # پوشه lib (فقط بخش‌های ضروری برای کامپایل C)
+        mkdir -p ../lib
+        cp -r lib/include ../lib/ 2>/dev/null || true
+        cp -r lib/libc ../lib/ 2>/dev/null || true
+        cp -r lib/std ../lib/ 2>/dev/null || true
+        cp lib/*.h ../lib/ 2>/dev/null || true
+        cp lib/*.zig ../lib/ 2>/dev/null || true
+        
+        cd ..
+        
+        # زیپ کردن
+        zip -r zig_minimal.zip zig lib
+        
+        # نمایش حجم
+        echo "=== SIZE CHECK ==="
+        SIZE_BYTES=$(stat -c%s zig_minimal.zip)
+        SIZE_MB=$((SIZE_BYTES / 1024 / 1024))
+        echo "File: zig_minimal.zip"
+        echo "Size: $SIZE_MB MB"
+        
+        if [ $SIZE_MB -gt 100 ]; then
+          echo "❌ ERROR: File is larger than 100 MB!"
+          exit 1
+        else
+          echo "✅ OK: File is under 100 MB limit."
+        fi
+    
+    - name: Upload as Artifact (backup)
+      uses: actions/upload-artifact@v4
+      with:
+        name: zig-minimal
+        path: zig_minimal.zip
+        retention-days: 3
+    
+    - name: Commit and Push
+      run: |
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+        git add zig_minimal.zip
+        git commit -m "Add minimal zig package ($(stat -c%s zig_minimal.zip | numfmt --to=iec))"
+        git push
