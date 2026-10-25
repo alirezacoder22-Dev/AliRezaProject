@@ -1,0 +1,43 @@
+name: Build Full Zig Package
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download Zig
+      run: |
+        wget -q https://ziglang.org/download/0.15.1/zig-x86_64-linux-0.15.1.tar.xz
+        tar -xf zig-x86_64-linux-0.15.1.tar.xz
+
+    - name: Create Full Package
+      run: |
+        cd zig-x86_64-linux-0.15.1
+        cp zig ../zig
+        cp -r lib ../lib
+        cd ..
+        zip -r zig_full.zip zig lib
+        SIZE_MB=$(( $(stat -c%s zig_full.zip) / 1024 / 1024 ))
+        echo "Size: $SIZE_MB MB"
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: zig-full
+        path: zig_full.zip
+        retention-days: 3
+
+    - name: Commit and Push
+      run: |
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+        git add zig_full.zip
+        git commit -m "Add full zig package" || echo "no changes"
+        git push
