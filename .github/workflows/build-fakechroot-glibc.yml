@@ -1,0 +1,37 @@
+name: Build fakechroot glibc
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install deps
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential git autoconf automake libtool gettext
+
+    - name: Build fakechroot
+      run: |
+        git clone --depth 1 https://github.com/dex4er/fakechroot.git /tmp/src
+        cd /tmp/src
+        ./autogen.sh
+        ./configure --prefix=/usr
+        make -j$(nproc)
+        cp src/.libs/libfakechroot.so $GITHUB_WORKSPACE/libfakechroot-glibc.so
+        cp src/fakechroot $GITHUB_WORKSPACE/fakechroot
+        ls -lh $GITHUB_WORKSPACE/libfakechroot-glibc.so $GITHUB_WORKSPACE/fakechroot
+
+    - name: Commit
+      run: |
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+        git add libfakechroot-glibc.so fakechroot
+        git commit -m "Add fakechroot glibc" || echo "no changes"
+        git push
