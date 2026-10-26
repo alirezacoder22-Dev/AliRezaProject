@@ -1,0 +1,35 @@
+name: Build fakechroot musl
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build inside Alpine
+      run: |
+        docker run --rm -v $PWD:/out alpine:3.20 sh -c '
+          apk add --no-cache build-base git autoconf automake libtool gettext-dev
+          git clone --depth 1 https://github.com/dex4er/fakechroot.git /src
+          cd /src
+          ./autogen.sh
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          cp src/.libs/libfakechroot.so /out/libfakechroot-musl.so
+          cp src/fakechroot /out/fakechroot
+        '
+        ls -lh libfakechroot-musl.so fakechroot
+
+    - name: Commit
+      run: |
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+        git add libfakechroot-musl.so fakechroot
+        git commit -m "Add fakechroot musl" || echo "no changes"
+        git push
