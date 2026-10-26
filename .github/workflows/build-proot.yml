@@ -1,0 +1,30 @@
+name: Build Static Proot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install deps
+      run: sudo apt-get update && sudo apt-get install -y build-essential libtalloc-dev git
+    
+    - name: Clone proot
+      run: git clone --depth 1 https://github.com/proot-me/proot.git
+    
+    - name: Build static
+      run: |
+        cd proot/src
+        make LDFLAGS="-static" loader.elf
+        make LDFLAGS="-static" proot
+        ls -lh proot
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: proot-static
+        path: proot/src/proot
+        retention-days: 3
